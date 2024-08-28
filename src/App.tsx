@@ -1,11 +1,30 @@
 import {Container,Box,Typography,Avatar,Pagination,Stack,Skeleton} from '@mui/material'
 import { useEffect, useState } from 'react';
+import CharacterMarvelModel from './models/Character';
+import CHARACTERS from './mock-data';
+
 function App() {
-  const [loadingCharacters,setLodingCharacters] = useState<boolean>(true)
+  const [ loadingCharacters,setLodingCharacters ] = useState<boolean>(true)
+  const [ charactersToDisplay, setCharactersToDisplay ] = useState<CharacterMarvelModel[]|null>(null)
+  const [ nbTotalOfCharacters, setnbTotalOfCharacters ] = useState<number>(0)
+  const [pageActive,setPageActive] = useState<number>(1)
+
+  const handleChangePage = (page:number) => {
+    const allCharacters = [...CHARACTERS]
+    const beginningIndex = ((page-1)*5)
+    const charactersToDisplayTemp = allCharacters.splice(beginningIndex,5)
+    setCharactersToDisplay(charactersToDisplayTemp)
+    setPageActive(page)
+  }
+
   useEffect(() =>{
     setTimeout(() => {
+      const allCharacters = [...CHARACTERS]
+      const charactersToDisplayTemp = allCharacters.splice(0,5)
+      setnbTotalOfCharacters(CHARACTERS.length)
+      setCharactersToDisplay(charactersToDisplayTemp)
       setLodingCharacters(false)
-    }, 3000);
+    }, 1000);
   },[])
 
   return (
@@ -31,31 +50,21 @@ function App() {
           ):
           (
             <>
-              <Avatar
-                alt="charcter-marvel"
-                src="http://i.annihil.us/u/prod/marvel/i/mg/3/20/5232158de5b16.jpg"
-                sx={{ width: 200, height: 200, border:"1px solid #732380", m:1 }}
-              /> 
-              <Avatar
-                alt="charcter-marvel"
-                src="http://i.annihil.us/u/prod/marvel/i/mg/6/20/52602f21f29ec.jpg"
-                sx={{ width: 200, height: 200, border:"1px solid #732380", m:1 }}
-              /> 
-              <Avatar
-                alt="charcter-marvel"
-                src="http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg"
-                sx={{ width: 200, height: 200, border:"1px solid #732380", m:1 }}
-              /> 
-              <Avatar
-                alt="charcter-marvel"
-                src="http://i.annihil.us/u/prod/marvel/i/mg/9/50/4ce18691cbf04.jpg"
-                sx={{ width: 200, height: 200, border:"1px solid #732380", m:1 }}
-              /> 
-              <Avatar
-                alt="charcter-marvel"
-                src="http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg"
-                sx={{ width: 200, height: 200, border:"1px solid #732380", m:1 }}
-              />
+              {
+                (charactersToDisplay !== null && charactersToDisplay.length > 0) && (
+                  <>
+                    {
+                      charactersToDisplay.map( charcter => (
+                        <Avatar
+                          alt="charcter-marvel"
+                          src={charcter.imageUrl}
+                          sx={{ width: 200, height: 200, border:"1px solid #732380", m:1 }}
+                        />
+                      ) ) 
+                    }
+                  </>
+                ) 
+              }
             </>
           )
         }
@@ -63,7 +72,8 @@ function App() {
       <Box className="pagination" sx={{display:"flex",justifyContent:"center",mt:2}} >
         <Stack spacing={2}>
           <Pagination
-            count={1564} 
+            // count={1564/5} 
+            count={nbTotalOfCharacters/5} 
             variant="outlined" 
             color="secondary" 
             boundaryCount={9}
@@ -72,6 +82,7 @@ function App() {
                 color: 'white'
               },
             }}
+            onChange={(e,page) => handleChangePage(page)}
           />
         </Stack>
       </Box>
