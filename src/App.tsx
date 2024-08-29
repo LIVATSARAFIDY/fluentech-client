@@ -16,8 +16,9 @@ function App() {
     const persoTemp = [...perso]
 
     try {
+      const baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:5000':'https://fluentech.onrender.com'
       const request = await fetch(
-        `http://localhost:5000/marvel/characters?nbCharacter=${perso.length}`,
+        `${baseUrl}/marvel/characters?nbCharacter=${perso.length}`,
         {
           method: 'GET',
           headers:{
@@ -46,6 +47,7 @@ function App() {
   }
 
   useEffect(() =>{
+    console.log('environnement', process.env.NODE_ENV)
       const allCharacters = [...perso]
       const charactersToDisplayTemp = allCharacters.splice(0,5)
       setnbTotalOfCharacters(perso.length)
