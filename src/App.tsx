@@ -47,7 +47,6 @@ function App() {
   }
 
   useEffect(() =>{
-    console.log('environnement', process.env.NODE_ENV)
       const allCharacters = [...perso]
       const charactersToDisplayTemp = allCharacters.splice(0,5)
       setnbTotalOfCharacters(perso.length)
